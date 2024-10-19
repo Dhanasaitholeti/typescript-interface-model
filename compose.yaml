@@ -1,0 +1,36 @@
+version: "1"
+
+services:
+  test:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: test-dev-c
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    depends_on:
+      - db
+    networks:
+      - test_dev
+  db:
+    image: postgres:16
+    container_name: postgres_container
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: test
+    ports:
+      - "5434:5432"
+    volumes:
+      - ./data/postgres-data:/var/lib/postgresql/data
+    networks:
+      - test_dev
+
+volumes:
+  postgres_data:
+networks:
+  test_dev:
+    driver: bridge
